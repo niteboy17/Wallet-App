@@ -4,24 +4,33 @@ import {
   Alert,
   TouchableOpacity,
   TextInput,
-  ActivityIndicatorBase,
   ActivityIndicator,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { API_URL } from "../../constants/api";
 import { styles } from "../../assets/styles/create.styles";
 import { COLORS } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 
-const CATEGORIES = [
+// Expense categories stay here so the picker only shows expense options when needed.
+const EXPENSE_CATEGORIES = [
   { id: "food", name: "Food & Drinks", icon: "fast-food" },
   { id: "shopping", name: "Shopping", icon: "cart" },
   { id: "transportation", name: "Transportation", icon: "car" },
   { id: "entertainment", name: "Entertainment", icon: "film" },
   { id: "bills", name: "Bills", icon: "receipt" },
-  { id: "income", name: "Income", icon: "cash" },
+  { id: "other", name: "Other", icon: "ellipsis-horizontal" },
+];
+
+// Income categories appear only after the user chooses Income, which keeps the picker focused.
+const INCOME_CATEGORIES = [
+  { id: "salary", name: "Salary", icon: "briefcase" },
+  { id: "freelance", name: "Freelance", icon: "laptop" },
+  { id: "stocks", name: "Stocks", icon: "trending-up" },
+  { id: "bonus", name: "Bonus", icon: "gift" },
+  { id: "refunds", name: "Refunds", icon: "return-up-back" },
   { id: "other", name: "Other", icon: "ellipsis-horizontal" },
 ];
 
@@ -32,11 +41,32 @@ const CreateScreen = () => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [isExpense, setIsExpense] = useState(true);
+  const [isExpense, setIsExpense] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const visibleCategories = isExpense === true ? EXPENSE_CATEGORIES : isExpense === false ? INCOME_CATEGORIES : [];
+
+  const resetForm = useCallback(() => {
+    setTitle("");
+    setAmount("");
+    setSelectedCategory("");
+    setIsExpense(null);
+    setIsLoading(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      resetForm();
+
+      return () => {
+        resetForm();
+      };
+    }, [resetForm])
+  );
 
   const handleCreate = async () => {
     // validations
+    if (isExpense === null) return Alert.alert("Error", "Please select income or expense type");
     if (!title.trim()) return Alert.alert("Error", "Please enter a transaction title");
     if (!amount || isNaN(parseFloat(amount)) || parseFloat(amount) <= 0) {
       Alert.alert("Error", "Please enter a valid amount");
@@ -72,6 +102,7 @@ const CreateScreen = () => {
       }
 
       Alert.alert("Success", "Transaction created successfully");
+      resetForm();
       router.back();
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to create transaction");
@@ -103,32 +134,38 @@ const CreateScreen = () => {
         <View style={styles.typeSelector}>
           {/* EXPENSE SELECTOR */}
           <TouchableOpacity
-            style={[styles.typeButton, isExpense && styles.typeButtonActive]}
-            onPress={() => setIsExpense(true)}
+            style={[styles.typeButton, isExpense === true && styles.typeButtonActive]}
+            onPress={() => {
+              setIsExpense(true);
+              setSelectedCategory("");
+            }}
           >
             <Ionicons
               name="arrow-down-circle"
               size={22}
-              color={isExpense ? COLORS.white : COLORS.expense}
+              color={isExpense === true ? COLORS.white : COLORS.expense}
               style={styles.typeIcon}
             />
-            <Text style={[styles.typeButtonText, isExpense && styles.typeButtonTextActive]}>
+            <Text style={[styles.typeButtonText, isExpense === true && styles.typeButtonTextActive]}>
               Expense
             </Text>
           </TouchableOpacity>
 
           {/* INCOME SELECTOR */}
           <TouchableOpacity
-            style={[styles.typeButton, !isExpense && styles.typeButtonActive]}
-            onPress={() => setIsExpense(false)}
+            style={[styles.typeButton, isExpense === false && styles.typeButtonActive]}
+            onPress={() => {
+              setIsExpense(false);
+              setSelectedCategory("");
+            }}
           >
             <Ionicons
               name="arrow-up-circle"
               size={22}
-              color={!isExpense ? COLORS.white : COLORS.income}
+              color={isExpense === false ? COLORS.white : COLORS.income}
               style={styles.typeIcon}
             />
-            <Text style={[styles.typeButtonText, !isExpense && styles.typeButtonTextActive]}>
+            <Text style={[styles.typeButtonText, isExpense === false && styles.typeButtonTextActive]}>
               Income
             </Text>
           </TouchableOpacity>
@@ -164,38 +201,42 @@ const CreateScreen = () => {
           />
         </View>
 
-        {/* TITLE */}
-        <Text style={styles.sectionTitle}>
-          <Ionicons name="pricetag-outline" size={16} color={COLORS.text} /> Category
-        </Text>
+        {/* Category picker stays hidden until Income or Expense is selected. */}
+        {isExpense !== null ? (
+          <>
+            <Text style={styles.sectionTitle}>
+              <Ionicons name="pricetag-outline" size={16} color={COLORS.text} /> Category
+            </Text>
 
-        <View style={styles.categoryGrid}>
-          {CATEGORIES.map((category) => (
-            <TouchableOpacity
-              key={category.id}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category.name && styles.categoryButtonActive,
-              ]}
-              onPress={() => setSelectedCategory(category.name)}
-            >
-              <Ionicons
-                name={category.icon}
-                size={20}
-                color={selectedCategory === category.name ? COLORS.white : COLORS.text}
-                style={styles.categoryIcon}
-              />
-              <Text
-                style={[
-                  styles.categoryButtonText,
-                  selectedCategory === category.name && styles.categoryButtonTextActive,
-                ]}
-              >
-                {category.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+            <View style={styles.categoryGrid}>
+              {visibleCategories.map((category) => (
+                <TouchableOpacity
+                  key={category.id}
+                  style={[
+                    styles.categoryButton,
+                    selectedCategory === category.name && styles.categoryButtonActive,
+                  ]}
+                  onPress={() => setSelectedCategory(category.name)}
+                >
+                  <Ionicons
+                    name={category.icon}
+                    size={20}
+                    color={selectedCategory === category.name ? COLORS.white : COLORS.text}
+                    style={styles.categoryIcon}
+                  />
+                  <Text
+                    style={[
+                      styles.categoryButtonText,
+                      selectedCategory === category.name && styles.categoryButtonTextActive,
+                    ]}
+                  >
+                    {category.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        ) : null}
       </View>
 
       {isLoading && (

@@ -12,6 +12,11 @@ const CATEGORY_ICONS = {
   Entertainment: "film",
   Bills: "receipt",
   Income: "cash",
+  Salary: "briefcase",
+  Freelance: "laptop",
+  Stocks: "trending-up",
+  Bonus: "gift",
+  Refunds: "return-up-back",
   Other: "ellipsis-horizontal",
 };
 
@@ -33,7 +38,7 @@ export const TransactionItem = ({ item, onDelete }) => {
           <Text
             style={[styles.transactionAmount, { color: isIncome ? COLORS.income : COLORS.expense }]}
           >
-            {isIncome ? "+" : "-"}${Math.abs(parseFloat(item.amount)).toFixed(2)}
+            {isIncome ? "+" : "-"}৳{Math.abs(parseFloat(item.amount)).toFixed(2)}
           </Text>
           <Text style={styles.transactionDate}>{formatDate(item.created_at)}</Text>
         </View>

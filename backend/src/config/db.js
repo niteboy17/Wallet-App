@@ -16,6 +16,22 @@ export async function initDB() {
       created_at DATE NOT NULL DEFAULT CURRENT_DATE
     )`;
 
+    await sql`CREATE TABLE IF NOT EXISTS monthly_rollovers(
+      user_id VARCHAR(255) NOT NULL,
+      month_key VARCHAR(7) NOT NULL,
+      balance_before DECIMAL(10,2) NOT NULL,
+      profit_amount DECIMAL(10,2) NOT NULL,
+      created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+      PRIMARY KEY (user_id, month_key)
+    )`;
+
+    await sql`CREATE TABLE IF NOT EXISTS monthly_automation_runs(
+      user_id VARCHAR(255) NOT NULL,
+      month_key VARCHAR(7) NOT NULL,
+      created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+      PRIMARY KEY (user_id, month_key)
+    )`;
+
     console.log("Database initialized successfully");
   } catch (error) {
     console.log("Error initializing DB", error);

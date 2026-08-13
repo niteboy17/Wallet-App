@@ -1,7 +1,7 @@
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 
-const defaultApiUrl = "https://wallet-api-cxqp.onrender.com/api";
+const defaultApiUrl = "http://localhost:5001/api";
 const configuredApiUrl = process.env.EXPO_PUBLIC_API_URL || defaultApiUrl;
 const localhostPattern = /(^|:\/\/)(localhost|127\.0\.0\.1)(:\d+)?/i;
 

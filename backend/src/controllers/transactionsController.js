@@ -1,4 +1,24 @@
 import { sql } from "../config/db.js";
+import { runMonthlyAutomationForUser } from "../services/monthlyAutomation.js";
+
+function resolveAppDate(req) {
+  const rawDate = req.headers["x-app-date"];
+  const parsed = rawDate ? new Date(rawDate) : new Date();
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+function toDateOnlyString(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function getMonthKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${year}-${month}`;
+}
 
 export async function getTransactionsByUserId(req, res) {
   try {
@@ -23,9 +43,11 @@ export async function createTransaction(req, res) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    const createdAt = toDateOnlyString(resolveAppDate(req));
+
     const transaction = await sql`
-      INSERT INTO transactions(user_id,title,amount,category)
-      VALUES (${user_id},${title},${amount},${category})
+      INSERT INTO transactions(user_id,title,amount,category,created_at)
+      VALUES (${user_id},${title},${amount},${category},${createdAt})
       RETURNING *
     `;
 
@@ -86,5 +108,28 @@ export async function getSummaryByUserId(req, res) {
   } catch (error) {
     console.log("Error gettin the summary", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+export async function runMonthlyAutomation(req, res) {
+  try {
+    const { userId } = req.params;
+    const appDate = resolveAppDate(req);
+    const presets = Array.isArray(req.body?.presets) ? req.body.presets : [];
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    const result = await runMonthlyAutomationForUser(userId, appDate, presets);
+
+    return res.status(200).json({
+      message: result.alreadyProcessed ? "Automation already applied for this month" : "Monthly automation applied",
+      monthKey: getMonthKey(appDate),
+      ...result,
+    });
+  } catch (error) {
+    console.log("Error running monthly automation", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 }

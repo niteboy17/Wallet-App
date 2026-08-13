@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 
-if (process.env.NODE_ENV === "production") job.start();
+job.start();
 
 // middleware
 app.use(cors());

@@ -14,13 +14,27 @@ export default function SignUpScreen() {
 
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
+  // Password rules stay local so weak passwords are blocked before Clerk is called.
+  const isStrongPassword = (value) => value.length >= 6 && /\d/.test(value);
+
   // Handle submission of sign-up form
   const onSignUpPress = async () => {
     if (!isLoaded) return;
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      setError("Password is too weak. Use 6+ chars and a number.");
+      return;
+    }
 
     // Start sign-up process using email and password provided
     try {
@@ -110,7 +124,7 @@ export default function SignUpScreen() {
       enableAutomaticScroll={true}
     >
       <View style={styles.container}>
-        <Image source={require("../../assets/images/revenue-i2.png")} style={styles.illustration} />
+        <Image source={require("../../assets/images/revenue-i2(ocean accent).png")} style={styles.illustration} />
 
         <Text style={styles.title}>Create Account</Text>
 
@@ -140,6 +154,16 @@ export default function SignUpScreen() {
           placeholderTextColor="#9A8478"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
+        />
+
+        {/* Confirm password prevents typos before the account is created. */}
+        <TextInput
+          style={[styles.input, error && styles.errorInput]}
+          value={confirmPassword}
+          placeholder="Confirm password"
+          placeholderTextColor="#9A8478"
+          secureTextEntry={true}
+          onChangeText={(value) => setConfirmPassword(value)}
         />
 
         <TouchableOpacity style={styles.button} onPress={onSignUpPress}>

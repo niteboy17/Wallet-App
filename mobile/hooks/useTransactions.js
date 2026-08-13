@@ -3,11 +3,13 @@
 import { useCallback, useState } from "react";
 import { Alert } from "react-native";
 import { API_URL } from "../constants/api";
+import { useAppDate } from "../context/AppDateContext";
 
 // const API_URL = "https://wallet-api-cxqp.onrender.com/api";
 // const API_URL = "http://localhost:5001/api";
 
 export const useTransactions = (userId) => {
+  const { appDate } = useAppDate();
   const [transactions, setTransactions] = useState([]);
   const [summary, setSummary] = useState({
     balance: 0,
@@ -16,26 +18,40 @@ export const useTransactions = (userId) => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
+  const buildHeaders = useCallback(() => {
+    const headers = {};
+
+    if (appDate) {
+      headers["x-app-date"] = appDate;
+    }
+
+    return headers;
+  }, [appDate]);
+
   // useCallback is used for performance reasons, it will memoize the function
   const fetchTransactions = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/transactions/${userId}`);
+      const response = await fetch(`${API_URL}/transactions/${userId}`, {
+        headers: buildHeaders(),
+      });
       const data = await response.json();
       setTransactions(data);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
-  }, [userId]);
+  }, [buildHeaders, userId]);
 
   const fetchSummary = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/transactions/summary/${userId}`);
+      const response = await fetch(`${API_URL}/transactions/summary/${userId}`, {
+        headers: buildHeaders(),
+      });
       const data = await response.json();
       setSummary(data);
     } catch (error) {
       console.error("Error fetching summary:", error);
     }
-  }, [userId]);
+  }, [buildHeaders, userId]);
 
   const loadData = useCallback(async () => {
     if (!userId) return;
