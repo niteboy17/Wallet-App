@@ -24,14 +24,10 @@ The Wallet App is a personal finance tracker that allows users to:
 This project is built with:
 
 - **JavaScript** (100%)
-- *(Add frameworks/libraries if used, e.g. React, Node.js, Express, MongoDB, etc.)*
+- Mobile: **Expo / React Native**
+- Backend: **Node.js** (if applicable)
 
-Example:
-- Frontend: React + CSS
-- Backend: Node.js + Express
-- Database: MongoDB
-
-> Update this section to match your actual project structure.
+> Update this section to match your exact project structure.
 
 ## Installation
 
@@ -44,64 +40,113 @@ cd Wallet-App
 
 ### 2) Install dependencies
 
+Install root dependencies:
+
 ```bash
 npm install
 ```
 
-### 3) Create your environment file
+Install mobile dependencies:
 
-Create a file named `.env` in the **root of the project** (same level as `package.json`).
+```bash
+cd mobile
+npm install
+cd ..
+```
+
+## Environment Variables
+
+This project uses **two `.env` files**:
+
+1. One for the **backend** (project root)
+2. One for the **mobile app** (`mobile/` folder)
+
+---
+
+### 1) Backend `.env`
+
+Create this file in the root of the repo:
 
 ```bash
 touch .env
 ```
 
-Add your environment variables in this format:
+Path:
+- `Wallet-App/.env`
+
+Add:
 
 ```env
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-API_URL=http://localhost:5000
+DATABASE_URL=postgresql://username:password@localhost:5432/wallet_app
+
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
+
+UPSTASH_REDIS_REST_URL=https://your-redis-instance.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
 ```
 
-> Use only the variables your project actually needs.
+---
 
-### 4) Start the app
+### 2) Mobile `.env`
+
+Create this file inside the `mobile` folder:
 
 ```bash
-npm start
+touch mobile/.env
 ```
 
-Or, if your project uses dev mode:
+Path:
+- `Wallet-App/mobile/.env`
+
+Add:
+
+```env
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key
+EXPO_PUBLIC_API_URL=http://localhost:5000
+```
+
+If testing on a **real phone**, replace localhost with your computer's local IP:
+
+```env
+EXPO_PUBLIC_API_URL=http://192.168.1.100:5000
+```
+
+## Example `.env.example` files
+
+You can also create template files for contributors.
+
+Root `/.env.example`:
+
+```env
+PORT=
+DATABASE_URL=
+
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=
+
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=
+```
+
+`/mobile/.env.example`:
+
+```env
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=
+EXPO_PUBLIC_API_URL=
+```
+
+## Start the App
+
+Backend (from root):
 
 ```bash
 npm run dev
 ```
 
-## Where to Set `.env` and How
+Mobile (from `mobile/`):
 
-- Place `.env` in the project root:
-  - ✅ `Wallet-App/.env`
-  - ❌ `Wallet-App/src/.env`
-
-- Access variables in JavaScript/Node.js with:
-
-```js
-process.env.VARIABLE_NAME
-```
-
-- If using a frontend build tool, use its env format (for example, React may require `REACT_APP_*` prefixes).
-
-## Example `.env.example`
-
-You can also create a template file for other developers:
-
-```env
-PORT=
-MONGO_URI=
-JWT_SECRET=
-API_URL=
+```bash
+npx expo start
 ```
 
 ## Scripts
