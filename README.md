@@ -1,23 +1,56 @@
 # Wallet App
 
+<p align="center">
+  <img src="./screenshots/Thumbnail.jpg" alt="Wallet App Thumbnail" width="100%" />
+</p>
+
 A simple JavaScript-based Wallet App to help users track their balance, income, and expenses in one place.
 
 ## Features
 
-- **Add transactions** (income and expenses)
+- **Secure Authentication** with Clerk (Sign In / Sign Up)
+- **Add transactions** for income and expenses
 - **View current balance** updated in real time
 - **Transaction history** with clear entries
-- **Categorize spending** (if supported in your app)
-- **Responsive UI** for desktop/mobile use (if applicable)
+- **Automation settings** support
+- **Responsive mobile experience** built with Expo/React Native
 
 ## What the App Does
 
 The Wallet App is a personal finance tracker that allows users to:
 
-1. Record money coming in (income)
-2. Record money going out (expenses)
-3. Automatically calculate and display remaining balance
-4. Review transaction activity for better budgeting
+1. Create an account and securely sign in
+2. Record money coming in (income)
+3. Record money going out (expenses)
+4. Automatically calculate and display remaining balance
+5. Review transaction activity for better budgeting
+6. Manage automation-related preferences
+
+## App Screenshot Preview
+
+### Thumbnail
+
+![Thumbnail](./screenshots/Thumbnail.jpg)
+
+### Authentication
+
+| Sign In | Sign Up |
+|---|---|
+| ![Sign In](./screenshots/Sign%20In.png) | ![Sign Up](./screenshots/Sign%20Up.png) |
+
+### Dashboard
+
+![Home](./screenshots/Home.png)
+
+### Transactions
+
+| Income Transaction | Expense Transaction |
+|---|---|
+| ![Create Transactions for Income](./screenshots/Create%20Transactions%20for%20Income.png) | ![Create Transactions for Expense](./screenshots/Create%20Transactions%20for%20Expense.png) |
+
+### Settings
+
+![Automation Settings](./screenshots/Automation%20Settings.png)
 
 ## Tech Stack / What Was Used to Build It
 
@@ -25,7 +58,10 @@ This project is built with:
 
 - **JavaScript** (100%)
 - Mobile: **Expo / React Native**
+- Authentication: **Clerk**
 - Backend: **Node.js** (if applicable)
+- Data Store / Caching: **Upstash Redis**
+- Database: configured via `DATABASE_URL`
 
 > Update this section to match your exact project structure.
 
