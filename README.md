@@ -1,5 +1,9 @@
 # Wallet App
 
+<p align="center">
+  <img src="./screenshots/Thumbnail.jpg" alt="Wallet App Thumbnail" width="100%" />
+</p>
+
 A simple JavaScript-based Wallet App to help users track their balance, income, and expenses in one place.
 
 ## Features
