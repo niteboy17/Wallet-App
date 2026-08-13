@@ -1,9 +1,5 @@
 # Wallet App
 
-<p align="center">
-  <img src="./screenshots/Thumbnail.jpg" alt="Wallet App Thumbnail" width="100%" />
-</p>
-
 A simple JavaScript-based Wallet App to help users track their balance, income, and expenses in one place.
 
 ## Features
@@ -28,29 +24,17 @@ The Wallet App is a personal finance tracker that allows users to:
 
 ## App Screenshot Preview
 
-### Thumbnail
+<p align="center">
+  <img src="./screenshots/Sign%20In.png" alt="Sign In" width="210" />
+  <img src="./screenshots/Sign%20Up.png" alt="Sign Up" width="210" />
+  <img src="./screenshots/Home.png" alt="Home" width="210" />
+</p>
 
-![Thumbnail](./screenshots/Thumbnail.jpg)
-
-### Authentication
-
-| Sign In | Sign Up |
-|---|---|
-| ![Sign In](./screenshots/Sign%20In.png) | ![Sign Up](./screenshots/Sign%20Up.png) |
-
-### Dashboard
-
-![Home](./screenshots/Home.png)
-
-### Transactions
-
-| Income Transaction | Expense Transaction |
-|---|---|
-| ![Create Transactions for Income](./screenshots/Create%20Transactions%20for%20Income.png) | ![Create Transactions for Expense](./screenshots/Create%20Transactions%20for%20Expense.png) |
-
-### Settings
-
-![Automation Settings](./screenshots/Automation%20Settings.png)
+<p align="center">
+  <img src="./screenshots/Create%20Transactions%20for%20Income.png" alt="Create Income Transaction" width="210" />
+  <img src="./screenshots/Create%20Transactions%20for%20Expense.png" alt="Create Expense Transaction" width="210" />
+  <img src="./screenshots/Automation%20Settings.png" alt="Automation Settings" width="210" />
+</p>
 
 ## Tech Stack / What Was Used to Build It
 
